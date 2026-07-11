@@ -7,16 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint src"
-  },
-  "dependencies": {
-    "three": "^r128",
-    "cannon-es": "^0.20.0"
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.0.0",
-    "@vitejs/plugin-react": "^4.2.0",
-    "eslint": "^8.56.0"
+    "vite": "^5.0.0"
   }
 }

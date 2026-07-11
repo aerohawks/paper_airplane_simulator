@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>종이비행기 시뮬레이터</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        #canvas {
+            flex: 1;
+            min-height: 600px;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-panel {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-item label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .value-display {
+            font-size: 11px;
+            color: #888;
+            text-align: right;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stats {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #764ba2;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .control-panel {
+                width: 100%;
+                max-height: none;
+            }
+
+            #canvas {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="canvas"></canvas>
+        
+        <div class="control-panel">
+            <div class="section-title">🛩️ 비행기 설계</div>
+            
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="wingSize">날개 크기</label>
+                    <input type="range" id="wingSize" min="0.5" max="3" step="0.1" value="1.5">
+                    <span class="value-display" id="wingSize-display">1.5</span>
+                </div>
+                
+                <div class="control-item">
+                    <label for="weight">무게</label>
+                    <input type="range" id="weight" min="0.1" max="2" step="0.1" value="0.5">
+                    <span class="value-display" id="weight-display">0.5</span>
+                </div>
+
+                <div class="control-item">
+                    <label for="bodyLength">동체 길이</label>
+                    <input type="range" id="bodyLength" min="0.8" max="2" step="0.1" value="1.2">
+                    <span class="value-display" id="bodyLength-display">1.2</span>
+                </div>
+
+                <div class="control-item">
+                    <label for="tailSize">꼬리 크기</label>
+                    <input type="range" id="tailSize" min="0.3" max="1.5" step="0.1" value="0.8">
+                    <span class="value-display" id="tailSize-display">0.8</span>
+                </div>
+            </div>
+
+            <div class="section-title">🎯 발사 설정</div>
+            
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="launchForce">발사력</label>
+                    <input type="range" id="launchForce" min="5" max="50" step="1" value="25">
+                    <span class="value-display" id="launchForce-display">25</span>
+                </div>
+
+                <div class="control-item">
+                    <label for="launchAngle">발사 각도 (°)</label>
+                    <input type="range" id="launchAngle" min="-30" max="60" step="5" value="15">
+                    <span class="value-display" id="launchAngle-display">15°</span>
+                </div>
+
+                <div class="control-item">
+                    <label for="windForce">바람 강도</label>
+                    <input type="range" id="windForce" min="0" max="15" step="0.5" value="0">
+                    <span class="value-display" id="windForce-display">0</span>
+                </div>
+            </div>
+
+            <div class="section-title">⚙️ 환경</div>
+            
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="gravity">중력</label>
+                    <input type="range" id="gravity" min="5" max="15" step="0.5" value="9.81">
+                    <span class="value-display" id="gravity-display">9.81</span>
+                </div>
+
+                <div class="control-item">
+                    <label for="dragCoefficient">공기 저항</label>
+                    <input type="range" id="dragCoefficient" min="0.01" max="0.5" step="0.01" value="0.15">
+                    <span class="value-display" id="dragCoefficient-display">0.15</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" id="launchBtn">🚀 발사</button>
+                <button class="btn-secondary" id="resetBtn">🔄 초기화</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">비행 시간:</span>
+                    <span class="stat-value" id="stat-time">0.0s</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">최대 높이:</span>
+                    <span class="stat-value" id="stat-height">0.0m</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">최대 거리:</span>
+                    <span class="stat-value" id="stat-distance">0.0m</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">최대 속도:</span>
+                    <span class="stat-value" id="stat-speed">0.0 m/s</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>

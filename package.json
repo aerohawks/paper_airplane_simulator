@@ -1,0 +1,22 @@
+{
+  "name": "paper_airplane_simulator",
+  "version": "1.0.0",
+  "description": "Interactive web-based paper airplane physics simulator",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "three": "^r128",
+    "cannon-es": "^0.20.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "eslint": "^8.56.0"
+  }
+}

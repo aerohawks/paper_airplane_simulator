@@ -12,14 +12,14 @@ class Simulator {
 
         // Three.js 초기화
         this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x87CEEB);
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 0.1, 10000);
-        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true });
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: false });
         this.renderer.setSize(this.width, this.height);
-        this.renderer.setClearColor(0x87CEEB);
         this.renderer.shadowMap.enabled = true;
 
-        // 카메라 위치
-        this.camera.position.set(0, 5, 15);
+        // 카메라 위치 - 비행기를 볼 수 있는 거리
+        this.camera.position.set(0, 3, 8);
         this.camera.lookAt(0, 0, 0);
 
         // 조명
@@ -105,7 +105,7 @@ class Simulator {
         };
 
         this.airplane = new PaperAirplane(params);
-        this.airplane.body.position.set(0, 1.5, 0);
+        this.airplane.body.position.set(0, 2, 0);
         this.scene.add(this.airplane.mesh);
         this.physicsEngine.world.addBody(this.airplane.body);
     }
@@ -152,7 +152,7 @@ class Simulator {
 
         // 새로운 비행기 생성
         this.airplane = new PaperAirplane(params);
-        this.airplane.body.position.set(0, 1.5, 0);
+        this.airplane.body.position.set(0, 2, 0);
         this.scene.add(this.airplane.mesh);
         this.physicsEngine.world.addBody(this.airplane.body);
 
@@ -252,12 +252,12 @@ class Simulator {
         // 통계 업데이트
         this.updateStats();
 
-        // 카메라가 비���기를 따라가도록
-        if (this.airplane) {
+        // 카메라 - 비행 중일 때만 추적
+        if (this.airplane && this.stats.isFlying) {
             const pos = this.airplane.body.position;
-            this.camera.position.x = pos.x + 5;
-            this.camera.position.y = pos.y + 8;
-            this.camera.position.z = pos.z + 15;
+            this.camera.position.x = pos.x + 2;
+            this.camera.position.y = pos.y + 3;
+            this.camera.position.z = pos.z + 8;
             this.camera.lookAt(pos.x, pos.y, pos.z);
         }
 

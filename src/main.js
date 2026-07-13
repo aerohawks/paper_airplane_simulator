@@ -45,6 +45,7 @@ class Simulator {
 
         this.setupEventListeners();
         this.createGround();
+        this.createInitialAirplane();
         this.animate();
     }
 
@@ -89,6 +90,26 @@ class Simulator {
         this.physicsEngine.world.addBody(groundBody);
     }
 
+    createInitialAirplane() {
+        // 초기 비행기 생성
+        const params = {
+            wingSize: 1.5,
+            weight: 0.5,
+            bodyLength: 1.2,
+            tailSize: 0.8,
+            launchForce: 0,
+            launchAngle: 0,
+            windForce: 0,
+            gravity: 9.81,
+            dragCoefficient: 0.15
+        };
+
+        this.airplane = new PaperAirplane(params);
+        this.airplane.body.position.set(0, 1.5, 0);
+        this.scene.add(this.airplane.mesh);
+        this.physicsEngine.world.addBody(this.airplane.body);
+    }
+
     setupEventListeners() {
         document.getElementById('launchBtn').addEventListener('click', () => this.launch());
         document.getElementById('resetBtn').addEventListener('click', () => this.reset());
@@ -131,6 +152,7 @@ class Simulator {
 
         // 새로운 비행기 생성
         this.airplane = new PaperAirplane(params);
+        this.airplane.body.position.set(0, 1.5, 0);
         this.scene.add(this.airplane.mesh);
         this.physicsEngine.world.addBody(this.airplane.body);
 
@@ -165,6 +187,8 @@ class Simulator {
             this.physicsEngine.world.removeBody(this.airplane.body);
             this.airplane = null;
         }
+
+        this.createInitialAirplane();
 
         this.stats = {
             flightTime: 0,
@@ -228,7 +252,7 @@ class Simulator {
         // 통계 업데이트
         this.updateStats();
 
-        // 카메라가 비행기를 따라가도록
+        // 카메라가 비���기를 따라가도록
         if (this.airplane) {
             const pos = this.airplane.body.position;
             this.camera.position.x = pos.x + 5;

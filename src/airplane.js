@@ -7,9 +7,10 @@ export class PaperAirplane {
         this.mass = params.weight;
 
         // 물리 바디 생성
+        const shape = new CANNON.Box(new CANNON.Vec3(0.1, 0.05, params.bodyLength * 0.5));
         this.body = new CANNON.Body({
             mass: this.mass,
-            shape: new CANNON.Box(new CANNON.Vec3(0.1, 0.05, params.bodyLength * 0.5))
+            shape: shape
         });
         this.body.position.set(0, 2, 0);
 
